@@ -2,9 +2,17 @@ import { useParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
 import { ArrowLeft, Heart } from "lucide-react";
 import { getStockById } from "@/data/stocks";
-import { MetricsDashboard } from "@/components/stock/MetricsDashboard";
+import { getExtendedData } from "@/data/stockExtendedData";
 import { HealthBadge } from "@/components/stock/HealthBadge";
 import { AISummary } from "@/components/stock/AISummary";
+import { PriceChart } from "@/components/stock/PriceChart";
+import { KeyMetricsCards } from "@/components/stock/KeyMetricsCards";
+import { FinancialStatementsSection } from "@/components/stock/FinancialStatements";
+import { RevenueBreakdown } from "@/components/stock/RevenueBreakdown";
+import { FiveYearOverview } from "@/components/stock/FiveYearOverview";
+import { BusinessMoatSection } from "@/components/stock/BusinessMoat";
+import { CompanyInfoSection } from "@/components/stock/CompanyInfo";
+import { NewsSection } from "@/components/stock/NewsSection";
 import { useWatchlist } from "@/hooks/useWatchlist";
 import { Button } from "@/components/ui/button";
 import { formatINR, formatMarketCap } from "@/lib/format";
@@ -30,6 +38,7 @@ export default function StockDetailPage() {
   }
 
   const inWatchlist = isInWatchlist(stock.id);
+  const extendedData = getExtendedData(stock.id, stock);
 
   return (
     <>
@@ -38,15 +47,15 @@ export default function StockDetailPage() {
         <meta name="description" content={`Fundamental analysis of ${stock.name} (${stock.ticker}). View key metrics like PE ratio, ROE, debt levels and more.`} />
       </Helmet>
 
-      <main className="container py-6 pb-24 md:pb-8">
+      <main className="container py-6 pb-24 md:pb-8 space-y-8">
         {/* Back Button */}
-        <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6">
+        <Link to="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground">
           <ArrowLeft className="h-4 w-4" />
           Back to Home
         </Link>
 
         {/* Header */}
-        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-8">
+        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
           <div className="flex items-start gap-4">
             <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-secondary text-secondary-foreground font-display font-bold text-2xl">
               {stock.ticker.slice(0, 2)}
@@ -79,26 +88,66 @@ export default function StockDetailPage() {
 
         {/* Health Badges */}
         {stock.health && (
-          <div className="flex flex-wrap gap-3 mb-8">
+          <div className="flex flex-wrap gap-3">
             <HealthBadge type="financialStrength" value={stock.health.financialStrength} />
             <HealthBadge type="profitability" value={stock.health.profitability} />
             <HealthBadge type="debtLevel" value={stock.health.debtLevel} />
           </div>
         )}
 
+        {/* Price Chart */}
+        <PriceChart
+          currentPrice={extendedData.priceData.current}
+          change={extendedData.priceData.change}
+          changePercent={extendedData.priceData.changePercent}
+          high52Week={extendedData.priceData.high52Week}
+          low52Week={extendedData.priceData.low52Week}
+          historicalPrices={extendedData.priceData.historicalPrices}
+        />
+
+        {/* Key Metrics Cards */}
+        <KeyMetricsCards
+          peRatio={stock.fundamentals.peRatio}
+          marketCap={stock.marketCap}
+          high52Week={extendedData.priceData.high52Week}
+          low52Week={extendedData.priceData.low52Week}
+          eps={stock.fundamentals.eps}
+          dividendYield={stock.fundamentals.dividendYield}
+          currentPrice={stock.currentPrice}
+        />
+
         {/* AI Summary */}
         <AISummary stock={stock} />
 
         {/* Description */}
         {stock.description && (
-          <div className="bg-card border border-border rounded-xl p-6 mb-8">
+          <div className="bg-card border border-border rounded-xl p-6">
             <h2 className="font-semibold mb-2">About {stock.name}</h2>
             <p className="text-muted-foreground">{stock.description}</p>
           </div>
         )}
 
-        {/* Metrics Dashboard */}
-        <MetricsDashboard stock={stock} />
+        {/* Financial Statements */}
+        <FinancialStatementsSection financials={extendedData.financials} />
+
+        {/* Revenue Breakdown & Company Info Grid */}
+        <div className="grid gap-6 lg:grid-cols-2">
+          <RevenueBreakdown segments={extendedData.revenueBreakdown} />
+          <CompanyInfoSection
+            companyInfo={extendedData.companyInfo}
+            sector={stock.sector}
+            industry={stock.industry}
+          />
+        </div>
+
+        {/* 5-Year Overview */}
+        <FiveYearOverview historicalData={extendedData.historicalData} />
+
+        {/* Business Moat */}
+        <BusinessMoatSection moat={extendedData.moat} companyName={stock.name} />
+
+        {/* News Section */}
+        <NewsSection news={extendedData.news} companyName={stock.name} />
       </main>
     </>
   );

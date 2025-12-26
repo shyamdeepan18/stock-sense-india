@@ -1,9 +1,10 @@
 import { useParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
-import { ArrowLeft, Heart, ExternalLink } from "lucide-react";
+import { ArrowLeft, Heart } from "lucide-react";
 import { getStockById } from "@/data/stocks";
 import { MetricsDashboard } from "@/components/stock/MetricsDashboard";
 import { HealthBadge } from "@/components/stock/HealthBadge";
+import { AISummary } from "@/components/stock/AISummary";
 import { useWatchlist } from "@/hooks/useWatchlist";
 import { Button } from "@/components/ui/button";
 import { formatINR, formatMarketCap } from "@/lib/format";
@@ -84,6 +85,9 @@ export default function StockDetailPage() {
             <HealthBadge type="debtLevel" value={stock.health.debtLevel} />
           </div>
         )}
+
+        {/* AI Summary */}
+        <AISummary stock={stock} />
 
         {/* Description */}
         {stock.description && (

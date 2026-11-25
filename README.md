@@ -1,73 +1,91 @@
-# Welcome to your Lovable project
+# StockSense India — AI-Powered Equity Fundamentals Intelligence
 
-## Project info
+An interactive financial intelligence web platform designed for retail investors in the Indian stock market (NSE/BSE). **StockSense India** pairs fundamental metrics with real-time generative AI analysis, translating complex corporate balance sheets into plain-English qualitative breakdowns.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+---
 
-## How can I edit this code?
+## 🌟 Key Highlights
 
-There are several ways of editing your application.
+- **Serverless LLM Edge Summarization:** Powered by Supabase Deno Edge Functions, invoking high-speed LLM generation with custom Indian equity context (INR metrics, sector benchmarks, long-term investor concerns).
+- **Interactive Financial Dashboard:** Built with Vite, React, TypeScript, and Tailwind CSS, featuring key metrics cards (P/E ratio, ROE, Debt-to-Equity, quarterly revenues) and trend indicators.
+- **Strict Separation of Secrets:** Clean client architecture with environment isolation; runtime secrets stay within Supabase Edge Functions.
 
-**Use Lovable**
+---
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+## 🏗️ Architecture Flow
 
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```
+┌─────────────────────────┐
+│ React / TypeScript UI   │
+│ (Vite + Tailwind CSS)   │
+└────────────┬────────────┘
+             │ 1. Request Stock Summary (Ticker, Fundamentals)
+             ▼
+┌─────────────────────────┐
+│ Supabase Edge Function  │ ──> [LLM Reasoning Engine]
+│ (Deno Runtime)          │ <── (Plain-English Financial Summary)
+└────────────┬────────────┘
+             │ 2. Return Structured Insights (Positives, Risks, Health)
+             ▼
+┌─────────────────────────┐
+│ `<AISummary />` Display │
+└─────────────────────────┘
 ```
 
-**Edit a file directly in GitHub**
+---
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## 🚀 Local Setup & Installation
 
-**Use GitHub Codespaces**
+### 1. Prerequisites
+- Node.js 18+ / Bun / pnpm
+- Supabase account with Edge Functions enabled
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### 2. Clone & Install Dependencies
+```bash
+git clone https://github.com/shyamdeepan18/stock-sense-india.git
+cd stock-sense-india
+npm install
+```
 
-## What technologies are used for this project?
+### 3. Environment Configuration
+Copy the template and configure your Supabase project keys:
+```bash
+cp .env.example .env
+```
+Populate `.env`:
+```env
+VITE_SUPABASE_PROJECT_ID="your-project-id"
+VITE_SUPABASE_PUBLISHABLE_KEY="your-anon-publishable-key"
+VITE_SUPABASE_URL="https://your-project-id.supabase.co"
+```
 
-This project is built with:
+### 4. Run Development Server
+```bash
+npm run dev
+```
+Navigate to `http://localhost:5173`.
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+---
 
-## How can I deploy this project?
+## 📁 Repository Structure
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+```
+├── .env.example                       # Template for local environment variables
+├── src/
+│   ├── components/
+│   │   └── stock/
+│   │       ├── AISummary.tsx          # AI narrative rendering component
+│   │       └── KeyMetricsCards.tsx    # Financial ratios & KPIs display
+│   ├── pages/                         # Core views & ticker analysis
+│   └── lib/supabase.ts                # Supabase client instantiation
+└── supabase/
+    └── functions/
+        └── stock-summary/
+            └── index.ts               # Deno Edge Function with prompt pipeline
+```
 
-## Can I connect a custom domain to my Lovable project?
+---
 
-Yes, you can!
+## 🛡️ License & Disclaimers
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+This project is built for educational and fundamental analysis assistance. It does not provide SEBI-registered investment advisory or buy/sell recommendations.
